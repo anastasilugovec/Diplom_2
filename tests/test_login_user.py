@@ -1,30 +1,20 @@
 import allure
-import pytest
 from api.stellar_burgers_api import StellarBurgersAPI
-from helpers import generate_name, generate_password, generate_unique_email
+
 
 
 class TestLoginUser:
-
     @allure.title("Успешная авторизация пользователя")
     @allure.description("Тест проверяет вход с корректными учетными данными")
-    def test_login_with_correct_credentials(self):
-        with allure.step("Генерация тестовых данных"):
-            name = generate_name()
-            email = generate_unique_email()  # Используем гарантированно уникальный email
-            password = generate_password()
-
-        with allure.step("Создание пользователя"):
-            create_response = StellarBurgersAPI.create_user(name, email, password)
-            assert create_response.status_code == 200
-
+    def test_login_with_correct_credentials(self, registered_user):
         with allure.step("Авторизация пользователя"):
-            login_response = StellarBurgersAPI.login_user(email, password)
+            login_response = StellarBurgersAPI.login(registered_user['email'], registered_user['password'])
 
         with allure.step("Проверка успешной авторизации"):
             assert login_response.status_code == 200
-            assert "accessToken" in login_response.json()
-            assert login_response.json()["success"] is True
+            json_response = login_response.json()
+            assert "accessToken" in json_response
+            assert json_response["success"] is True
 
     @allure.title("Авторизация с неверными учетными данными")
     @allure.description("Тест проверяет обработку неверного логина и пароля")
@@ -34,5 +24,6 @@ class TestLoginUser:
 
         with allure.step("Проверка ошибки авторизации"):
             assert response.status_code == 401
-            assert response.json()["message"] == "email or password are incorrect"
-            assert response.json()["success"] is False
+            json_response = response.json()
+            assert json_response["message"] == "email or password are incorrect"
+            assert json_response["success"] is False

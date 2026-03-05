@@ -1,6 +1,5 @@
 import requests
-from urls import REGISTER_URL, LOGIN_URL, USER_URL, ORDER_URL, INGREDIENTS_URL
-
+from urls import REGISTER_URL, LOGIN_URL, USER_URL, ORDER_URL, INGREDIENTS_URL, BASE_URL
 
 class StellarBurgersAPI:
 
@@ -14,7 +13,7 @@ class StellarBurgersAPI:
         return requests.post(REGISTER_URL, json=payload)
 
     @staticmethod
-    def login_user(email, password):
+    def login(email, password):
         payload = {
             "email": email,
             "password": password
@@ -40,3 +39,12 @@ class StellarBurgersAPI:
             "ingredients": ingredients
         }
         return requests.post(ORDER_URL, json=payload, headers=headers)
+
+    @staticmethod
+    def delete_user(access_token: str):
+        url = f"{BASE_URL}/auth/user"
+        headers = {
+            "Authorization": access_token
+        }
+        response = requests.delete(url, headers=headers)
+        return response

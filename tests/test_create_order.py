@@ -1,9 +1,11 @@
 import allure
-import pytest
 from api.stellar_burgers_api import StellarBurgersAPI
-
+from helpers import get_ingredients
 
 class TestCreateOrder:
+
+    def _get_ingredients(self):
+        return get_ingredients()
 
     @allure.title("Создание заказа с авторизацией")
     @allure.description("Тест проверяет создание заказа авторизованным пользователем")
@@ -77,10 +79,3 @@ class TestCreateOrder:
 
         with allure.step("Проверка ошибки сервера"):
             assert response.status_code == 500
-
-    def _get_ingredients(self):
-
-        with allure.step("Запрос списка доступных ингредиентов"):
-            response = StellarBurgersAPI.get_ingredients()
-            assert response.status_code == 200
-            return [i["_id"] for i in response.json()["data"]]

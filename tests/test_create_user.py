@@ -2,8 +2,7 @@ import allure
 import pytest
 from api.stellar_burgers_api import StellarBurgersAPI
 from helpers import generate_name, generate_password, generate_unique_email
-from data.test_data import TestData, StatusCodes, ErrorMessages, ResponseFields
-
+from data.test_data import StatusCodes, ErrorMessages, ResponseFields, TestData
 
 class TestCreateUser:
 
@@ -26,21 +25,28 @@ class TestCreateUser:
     @allure.title("Создание уже существующего пользователя")
     @allure.description("Тест проверяет обработку попытки создания дубликата пользователя")
     def test_create_existing_user(self):
-        with allure.step("Генерация тестовых данных"):
-            name = generate_name()
-            email = generate_unique_email()
-            password = generate_password()
+        # Генерируем тестовые данные
+        name = generate_name()
+        email = generate_unique_email()
+        password = generate_password()
 
-        with allure.step("Первое создание пользователя"):
-            first_response = StellarBurgersAPI.create_user(name, email, password)
-            assert first_response.status_code == StatusCodes.SUCCESS
+        # Первое создание
+        first_response = StellarBurgersAPI.create_user(name, email, password)
+        assert first_response.status_code == StatusCodes.SUCCESS
 
-        with allure.step("Попытка создания пользователя с теми же данными"):
-            second_response = StellarBurgersAPI.create_user(name, email, password)
+        # Попытка создать дубликат
+        second_response = StellarBurgersAPI.create_user(name, email, password)
 
         with allure.step("Проверка ошибки дублирования пользователя"):
             assert second_response.status_code == StatusCodes.FORBIDDEN
             assert second_response.json()[ResponseFields.MESSAGE] == ErrorMessages.USER_ALREADY_EXISTS
+
+        # Удаляем пользователя вручную
+        access_token = first_response.json().get("accessToken")
+        if access_token:
+            if not access_token.startswith("Bearer "):
+                access_token = f"Bearer {access_token}"
+            StellarBurgersAPI.delete_user(access_token)
 
     @allure.title("Создание пользователя без пароля")
     @allure.description("Тест проверяет валидацию при создании пользователя без пароля")
