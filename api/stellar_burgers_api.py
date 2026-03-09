@@ -22,7 +22,9 @@ class StellarBurgersAPI:
 
     @staticmethod
     def get_user(access_token):
-        headers = {"Authorization": access_token}
+        headers = {
+            "Authorization": access_token
+        }
         return requests.get(USER_URL, headers=headers)
 
     @staticmethod
@@ -31,7 +33,9 @@ class StellarBurgersAPI:
 
     @staticmethod
     def create_order(ingredients, access_token=None):
-        headers = {"Content-Type": "application/json"}
+        headers = {
+            "Content-Type": "application/json"
+        }
         if access_token:
             headers["Authorization"] = access_token
 
@@ -41,7 +45,7 @@ class StellarBurgersAPI:
         return requests.post(ORDER_URL, json=payload, headers=headers)
 
     @staticmethod
-    def delete_user(access_token: str):
+    def delete_user(access_token):
         url = f"{BASE_URL}/auth/user"
         headers = {
             "Authorization": access_token
