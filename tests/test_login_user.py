@@ -20,8 +20,7 @@ class TestLoginUser:
     @allure.description("Тест проверяет обработку неверного логина и пароля")
     def test_login_with_wrong_credentials(self):
         with allure.step("Отправка запроса с неверными учетными данными"):
-            response = StellarBurgersAPI.login_user("wrong@example.com", "wrongpass")
-
+            response = StellarBurgersAPI.login("wrong@example.com", "wrongpass")
         with allure.step("Проверка ошибки авторизации"):
             assert response.status_code == 401
             json_response = response.json()
