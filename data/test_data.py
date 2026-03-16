@@ -35,3 +35,16 @@ class TestData:
     EMPTY_PASSWORD = ""
     EMPTY_NAME = ""
     EMPTY_EMAIL = ""
+
+def generate_user_data():
+    return {
+        'name': generate_name(),
+        'email': generate_unique_email(),
+        'password': generate_password()
+    }
+def get_static_user_data():
+    return {
+        'name': 'TestUser',
+        'email': 'test@example.com',
+        'password': 'Password123!'
+    }

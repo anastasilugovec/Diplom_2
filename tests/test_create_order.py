@@ -2,6 +2,7 @@ import allure
 from api.stellar_burgers_api import StellarBurgersAPI
 from helpers import get_ingredients, create_user_in_api
 
+
 class TestCreateOrder:
 
     @allure.title("Создание заказа с авторизацией")

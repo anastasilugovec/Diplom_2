@@ -11,8 +11,8 @@ def generate_name():
 def generate_email():
     return faker.email()
 
-def generate_password():
-    return faker.password(length=10)
+def generate_password(length=10):
+    return faker.password(length=length)
 
 def generate_unique_email():
     timestamp = int(time.time() * 1000)
@@ -45,3 +45,10 @@ def create_user_in_api(user_data):
     if not access_token.startswith("Bearer "):
         access_token = f"Bearer {access_token}"
     return access_token
+
+def get_static_user_data():
+    return {
+        "name": "StaticUser",
+        "email": "staticuser@example.com",
+        "password": "Password123!"
+    }
