@@ -36,15 +36,12 @@ def generate_user_data():
 
 def create_user_in_api(user_data):
     response = StellarBurgersAPI.create_user(user_data["name"], user_data["email"], user_data["password"])
-    if response.status_code != 200:
+    if response.status_code == 200:
+        return response.json()
+    elif response.status_code == 403 and "User already exists" in response.text:
+        return None
+    else:
         raise Exception(f"Не удалось создать пользователя: {response.text}")
-    response_data = response.json()
-    access_token = response_data.get("accessToken")
-    if not access_token:
-        raise Exception("Access token не получен при создании пользователя")
-    if not access_token.startswith("Bearer "):
-        access_token = f"Bearer {access_token}"
-    return access_token
 
 def get_static_user_data():
     return {

@@ -1,8 +1,6 @@
 import allure
 from api.stellar_burgers_api import StellarBurgersAPI
 
-
-
 class TestLoginUser:
     @allure.title("Успешная авторизация пользователя")
     @allure.description("Тест проверяет вход с корректными учетными данными")

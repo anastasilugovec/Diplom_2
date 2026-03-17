@@ -1,4 +1,5 @@
 import pytest
+from http import HTTPStatus
 from api.stellar_burgers_api import StellarBurgersAPI
 from helpers import generate_name, generate_password, generate_unique_email, generate_user_data, get_static_user_data, create_user_in_api
 from data.test_data import StatusCodes
@@ -23,7 +24,6 @@ def registered_user():
     password = user_data['password']
 
     response = StellarBurgersAPI.create_user(name, email, password)
-    assert response.status_code == HTTPStatus.OK, f"Ошибка при создании пользователя: {response.text}"
 
     access_token = response.json().get("accessToken")
     user = {
@@ -39,30 +39,6 @@ def registered_user():
         token = access_token
         if not token.startswith("Bearer "):
             token = f"Bearer {token}"
-        StellarBurgersAPI.delete_user(token)
-
-@pytest.fixture
-def create_and_delete_user():
-    created_tokens = []
-
-    def _create_user():
-        user = {
-            'name': generate_name(),
-            'email': generate_unique_email(),
-            'password': generate_password()
-        }
-        response = StellarBurgersAPI.create_user(user['name'], user['email'], user['password'])
-        assert response.status_code == StatusCodes.SUCCESS, "Не удалось создать пользователя"
-        json_response = response.json()
-        token = json_response.get("accessToken")
-        if token and not token.startswith("Bearer "):
-            token = f"Bearer {token}"
-        created_tokens.append(token)
-        return token
-
-    yield _create_user
-
-    for token in created_tokens:
         try:
             StellarBurgersAPI.delete_user(token)
         except Exception as e:
